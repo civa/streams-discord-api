@@ -1,0 +1,21 @@
+name: Streams Discord API Docker CI/CD
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: | 
+          docker build -t solidhash/streams-discord-api .
+      - name: Login to Registry
+        run: |
+          docker login -u cryptociva --password-stdin <<< "${{ secrets.DOCKER_TOKEN }}"
+      - name: Push to Registry
+        run: |
+          docker push solidhash/streams-discord-api
