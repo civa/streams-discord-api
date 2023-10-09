@@ -47,7 +47,7 @@ app.post("/discord", async function (req, res) {
 const start = async () => {
     try {
         app.listen({
-            port: 80,
+            port: 3000,
             host: "0.0.0.0"
         })
     } catch (e) {
