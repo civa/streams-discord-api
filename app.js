@@ -1,7 +1,8 @@
 import axios from "axios";
 import Fastify from "fastify";
 import { formatEther, formatUnits } from "ethers";
-
+import known_tokens from "./tokens.js";
+import chains from "./chains.js";
 // import dotenv from "dotenv"; // uncomment this line if you want to use .env file
 // dotenv.config();
 
@@ -15,16 +16,10 @@ app.get("/", async (req, res) => {
     })
 })
 
-let known_tokens = [{
-    chain_id: 56,
-    contract_address: "0x55d398326f99059fF775485246999027B3197955",
-    name: "Tether USD",
-    symbol: "USDT",
-    decimals: 18,
-}]
+
 
 function getChainName(chain_id) {
-    let chains = [{ id: 56, name: "BSC" }, { id: 1, name: "ETH" }]
+
     let chain = chains.find(chain => chain.id == chain_id);
     if (chain) {
         return chain.name;
@@ -38,7 +33,7 @@ function getContractDetails(chain_id, contract_address) {
     console.log("contract_address", contract_address)
     console.log("chain_id", chain_id)
 
-    let contract = known_tokens.find(token => token.chain_id == chain_id && token.contract_address.toLowerCase() == contract_address.toLowerCase());
+    let contract = known_tokens.find(token => token.chainId == chain_id && token.address.toLowerCase() == contract_address.toLowerCase());
     if (contract) {
         return contract;
     }
@@ -60,7 +55,7 @@ function formatAmount(amount_in_wei, is_native, chain_id, token_contract) {
             return amount;
         }
         else {
-            return amount_in_wei;
+            return "Unknown Token";
         }
     }
 }
@@ -130,10 +125,6 @@ app.post("/discord", async function (req, res) {
             value: contract.decimals
         })
     }
-
-
-
-
 
     try {
         await axios.post(discord_webhook, {
